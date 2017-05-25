@@ -76,7 +76,13 @@ function respondAI (message) {
 
 function composeMessage (body) {
   delete body.code
-  return Object.keys(body).reduce((result, key) => result + "\n" + body[key], "").slice(1)
+  return Object.keys(body).reduce((result, key) => {
+    if (typeof body[key] === "string") {
+      return result + "\n" + body[key]
+    } else {
+      return result + "\n" + JSON.stringify(body[key])
+    }
+  }, "").slice(1)
 }
 
 function mentioned (message) {
