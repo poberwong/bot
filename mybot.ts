@@ -38,13 +38,8 @@ function handleMessage (message) {
 }
 
 function handleRoomMessage (message) {
-  // const room = message.room()
-  // const contact = message.from()
-  const mentionedList = message.mentioned()
-  const botMentioned = mentionedList.find(member => {
-    return member.name() === botNickName
-  })
-  if (botMentioned) {
+  console.log("room message: ", message.content())
+  if (mentioned(message)) {
     respondAI(message)
   }
 }
@@ -59,6 +54,9 @@ function respondAI (message) {
   if(typeof content !== "string") {
     content = content.toString()
   }
+
+  // remove mentioned contact user
+  content = content.replace(/\@\S+\ /g, "").replace(/\@\S+$/, "")
 
   request.post("http://www.tuling123.com/openapi/api", {
      body: {
@@ -76,4 +74,17 @@ function respondAI (message) {
       }
     })
 
+}
+
+function mentioned (message) {
+  const mentionedList = message.mentioned()
+  const mentionedBySystem = mentionedList.find(member => {
+    return member.name() === botNickName
+  })
+
+  const content = message.content()
+  const mentionedByReg =
+  	new RegExp("\@" + botNickName + "\ ").test(content)
+  	|| new RegExp("\@" + botNickName + "$").test(content)
+  return mentionedBySystem || mentionedByReg
 }
