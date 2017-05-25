@@ -38,7 +38,6 @@ function handleMessage (message) {
 }
 
 function handleRoomMessage (message) {
-  console.log("room message: ", message.content())
   if (mentioned(message)) {
     respondAI(message)
   }
@@ -56,13 +55,13 @@ function respondAI (message) {
   }
 
   // remove mentioned contact user
-  content = content.replace(/\@\S+\ /g, "").replace(/\@\S+$/, "")
+  content = content.replace(/@\S+[^\S]+/g, "").replace(/@\S+/, "")
 
   request.post("http://www.tuling123.com/openapi/api", {
      body: {
        key: apiKey,
        info: content,
-       userid: "poberwong"
+       userid: message.from()
      },
      json: true
     }, (error, result, body) => {
@@ -78,9 +77,7 @@ function respondAI (message) {
 
 function mentioned (message) {
   const mentionedList = message.mentioned()
-  const mentionedBySystem = mentionedList.find(member => {
-    return member.name() === botNickName
-  })
+  const mentionedBySystem = mentionedList.find(member => member.name() === botNickName)
 
   const content = message.content()
   const mentionedByReg =
