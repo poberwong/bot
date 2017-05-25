@@ -76,8 +76,7 @@ function respondAI (message) {
 
 function composeMessage (body) {
   delete body.code
-  let keys = Object.keys(body)
-  return body[keys[0]] + keys.slice(1).reduce((result, key) => result + "\n" + body[key])
+  return Object.keys(body).reduce((result, key) => result + "\n" + body[key], "").slice(1)
 }
 
 function mentioned (message) {
