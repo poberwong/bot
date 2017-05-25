@@ -69,10 +69,15 @@ function respondAI (message) {
         console.log("request error: ", error)
       } else {
        // console.log("from tuling: ", body)
-        message.say(body.text)
+        message.say(composeMessage(body))
       }
     })
+}
 
+function composeMessage (body) {
+  delete body.code
+  let keys = Object.keys(body)
+  return body[keys[0]] + keys.slice(1).reduce((result, key) => result + "\n" + body[key])
 }
 
 function mentioned (message) {
